@@ -16,7 +16,8 @@ angular.module('starter', ['ionic'])
     {id: 6, headline: "Islanders seek update after Facebook dumps them in Norway"},
     {id: 7, headline: "Top civil servant denies Labour overspend"},
     {id: 8, headline: "Britain set for weeks of political paralysis"},
-    {id: 9, headline: "Don't be tempted by the politics of apathy. Vote for hope."}
+    {id: 9, headline: "Don't be tempted by the politics of apathy. Vote for hope."},
+    {id: 10, headline: "Clegg bums goats. More at 11."}
   ];
 
   $scope.searchQuery;
@@ -36,21 +37,30 @@ angular.module('starter', ['ionic'])
   });
 
   $scope.doSomething = function() {
-    // console.log('Clicked!');
-    $scope.searchResults = $scope.indexedText.search($scope.searchQuery)
-      .map(function (result) {
-        return $scope.items.filter(function (q) {
-          return q.id === parseInt(result.ref, 10)
-        })[0];
-      });
+    if (!$scope.searchQuery) {
+      alert('No content!')
+    } else {
+      $scope.searchResults = $scope.indexedText.search($scope.searchQuery)
+        .map(function (result) {
+          return $scope.items.filter(function (q) {
+            return q.id === parseInt(result.ref, 10)
+          })[0];
+        });
 
-    $scope.items = $scope.searchResults;  
-    console.log($scope.searchResults);
+      $scope.items = $scope.searchResults;  
+      console.log($scope.searchResults, $scope.searchQuery.value);
+    }
+
 
     // Filter items - should update automatically
     // $scope.items = $scope.items.filter(function(q) {
     //   return q.id === parseInt($scope.searchResults.ref, 10)[0];
     // })
+  };
+
+  $scope.clearSearch = function() {
+    $scope.searchQuery = "";
+    document.getElementById('searchInput').focus();
   };
 })
 

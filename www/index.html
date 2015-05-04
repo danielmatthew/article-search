@@ -32,14 +32,15 @@
       <ion-header-bar class="bar-subheader item-input-inset">
         <label class="item-input-wrapper">
           <i class="icon ion-ios-search placeholder-icon"></i>
-          <input type="search" placeholder="Enter your search query" ng-model="searchQuery">
+          <input id="searchInput" type="search" placeholder="Enter your search query" ng-model="searchQuery">
+          <i ng-if="searchQuery.length > 0" ng-click="clearSearch()" class="icon ion-close"></i>
         </label>
         <button ng-click="doSomething()" class="button button-calm button-clear">Search</button>
       </ion-header-bar>
 
       <ion-content>
         <ion-list>
-          <ion-item collection-repeat="item in items" item="item">
+          <ion-item ng-repeat="item in items | filter:searchQuery" item="item">
             {{item.headline}}
           </ion-item>
         </ion-list>
