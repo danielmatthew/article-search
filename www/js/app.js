@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 angular.module('starter', ['ionic'])
 
-.controller('MyCtrl', function($scope, Lunr) {
+.controller('MyCtrl', function($scope, $ionicPopup, Lunr) {
   $scope.items = [
     {id: 0, headline: "Clegg hints at backing Tories"},
     {id: 1, headline: "Miliband pledge stone is 'Sheffield Rally' moment"},
@@ -21,6 +21,10 @@ angular.module('starter', ['ionic'])
   ];
 
   $scope.searchQuery;
+
+  // pinch logic from other file
+  // apply $watch to input
+  // update list 'model' with lunr'd results
 
   // Initialise Lunr index
   $scope.indexedText = lunr(function () {
@@ -38,7 +42,7 @@ angular.module('starter', ['ionic'])
 
   $scope.doSomething = function() {
     if (!$scope.searchQuery) {
-      alert('No content!')
+      $scope.showAlert();
     } else {
       $scope.searchResults = $scope.indexedText.search($scope.searchQuery)
         .map(function (result) {
@@ -62,6 +66,13 @@ angular.module('starter', ['ionic'])
     $scope.searchQuery = "";
     document.getElementById('searchInput').focus();
   };
+
+  $scope.showAlert = function() {
+    var alertPopup = $ionicPopup.alert({
+      title: "Empty Query",
+      template: "Please enter a search query"
+    });
+  };
 })
 
 .factory('Lunr', function($window) {
@@ -69,6 +80,18 @@ angular.module('starter', ['ionic'])
 
   return lunr;
 })
+
+// .filter('lunrFilter', function(){
+//   return function(input) {
+//     var filteredSearchResults = [];
+
+//     angular.forEach(input, function(result) {
+
+//     })
+
+//     return filteredSearchResults;
+//   }
+// })
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
