@@ -5,7 +5,18 @@
 // the 2nd parameter is an array of 'requires'
 angular.module('starter', ['ionic'])
 
-.controller('MyCtrl', function($scope, $ionicPopup, Lunr) {
+.service("articlesService", function($http, $q) {
+  var deferred = $q.defer();
+  $http.get('articles.json').then(function(data) {
+    deferred.resolve(data);
+  });
+
+  this.getArticles = function() {
+    return deferred.promise;
+  }
+})
+
+.controller('MyCtrl', function($scope, $ionicPopup, Lunr, articlesService) {
   $scope.items = [
     {id: 0, headline: "Clegg hints at backing Tories"},
     {id: 1, headline: "Miliband pledge stone is 'Sheffield Rally' moment"},
@@ -17,20 +28,24 @@ angular.module('starter', ['ionic'])
     {id: 7, headline: "Top civil servant denies Labour overspend"},
     {id: 8, headline: "Britain set for weeks of political paralysis"},
     {id: 9, headline: "Don't be tempted by the politics of apathy. Vote for hope."},
-    {id: 10, headline: "Clegg bums goats. More at 11."}
+    {id: 10, headline: "Clegg bums goats. More at 11."},
+    {id: 11, headline: "Cameron bums Clegg in order to create coalition."}
   ];
+
+  var promise = articlesService.getArticles();
+  promise.then(function(data) {
+    $scope.articles = data.data.data;
+    console.log($scope.articles);
+  });
 
   $scope.searchQuery;
 
-  // pinch logic from other file
-  // apply $watch to input
-  // update list 'model' with lunr'd results
-
   // Initialise Lunr index
   $scope.indexedText = lunr(function () {
-    this.field('headline', {boost: 10})
+    this.field('headline', {boost: 10}),
     this.ref('id')
   });
+
 
   // Loop over our data and add to index
   $scope.items.forEach(function(entry) {
@@ -40,31 +55,37 @@ angular.module('starter', ['ionic'])
     });
   });
 
+  $scope.$watch('searchQuery', function(newVal) {
+      console.log("String changed", newVal);
+      // Update model with results from Lunr index
+      $scope.searchIndex(newVal);
+  });
+
   $scope.doSomething = function() {
+    var items = $scope.items;
     if (!$scope.searchQuery) {
       $scope.showAlert();
     } else {
-      $scope.searchResults = $scope.indexedText.search($scope.searchQuery)
-        .map(function (result) {
-          return $scope.items.filter(function (q) {
-            return q.id === parseInt(result.ref, 10)
-          })[0];
-        });
-
-      $scope.items = $scope.searchResults;  
-      console.log($scope.searchResults, $scope.searchQuery.value);
+      $scope.items = $scope.searchIndex($scope.searchQuery);
+      // $scope.items = $scope.searchResults; 
+      console.log($scope.searchResults, $scope.indexedText.search($scope.searchQuery));
     }
+  };
 
+  $scope.searchIndex = function(q) {
+    $scope.searchResults = $scope.indexedText.search(q)
+      .map(function (result) {
+        return $scope.items.filter(function (q) {
+          return q.id === parseInt(result.ref, 10) // Adds id field to object 
+        })[0];
+      });
 
-    // Filter items - should update automatically
-    // $scope.items = $scope.items.filter(function(q) {
-    //   return q.id === parseInt($scope.searchResults.ref, 10)[0];
-    // })
+    console.log($scope.searchResults);
+    return $scope.searchResults;
   };
 
   $scope.clearSearch = function() {
     $scope.searchQuery = "";
-    document.getElementById('searchInput').focus();
   };
 
   $scope.showAlert = function() {
@@ -81,17 +102,24 @@ angular.module('starter', ['ionic'])
   return lunr;
 })
 
-// .filter('lunrFilter', function(){
-//   return function(input) {
-//     var filteredSearchResults = [];
+.filter('lunrFilter', function(){
+  return function(items, letter) {
+    var filteredSearchResults = [];
 
-//     angular.forEach(input, function(result) {
+    var letterMatch = new RegExp(letter, 'i');
 
-//     })
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      if (letterMatch.test(item.headline)) {
+        filteredSearchResults.push(item)
+      }
+    };
 
-//     return filteredSearchResults;
-//   }
-// })
+
+
+    return filteredSearchResults;
+  }
+})
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {

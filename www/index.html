@@ -40,8 +40,9 @@
 
       <ion-content class="has-subheader">
         <ion-list>
-          <ion-item ng-repeat="item in items | filter:searchQuery" item="item">
-            {{item.headline}}
+          <ion-item ng-repeat="article in articles | lunrFilter:searchQuery" item="item" >
+            <!-- {{article.chapter}} -->
+            {{article.content}}
           </ion-item>
         </ion-list>
       </ion-content>
