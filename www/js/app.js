@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
+angular.module('starter', ['ionic', 'ngSanitize'])
 
 .service("articlesService", function($http, $q) {
   var deferred = $q.defer();
@@ -16,7 +16,7 @@ angular.module('starter', ['ionic'])
   }
 })
 
-.controller('MyCtrl', function($scope, $ionicPopup, Lunr, articlesService) {
+.controller('MyCtrl', function($scope, $ionicPopup, Lunr, articlesService, $sce) {
   $scope.items = [
     {id: 0, headline: "Clegg hints at backing Tories"},
     {id: 1, headline: "Miliband pledge stone is 'Sheffield Rally' moment"},
@@ -93,6 +93,27 @@ angular.module('starter', ['ionic'])
       title: "Empty Query",
       template: "Please enter a search query"
     });
+  };
+  
+  $scope.skipValidation = function(value) {
+    return $sce.trustAsHtml(value);
+  };
+  
+  $scope.toggleSection = function(sectionId) {
+    console.log("You clicked: " + sectionId);
+  };
+})
+
+.directive('dynamic', function($compile) {
+  return {
+    restrict: 'A',
+    replace: true,
+    link: function(scope, ele, attrs) {
+      scope.$watch(attrs.dynamic, function(html) {
+        ele.html(html);
+        $compile(ele.contents())(scope);
+      });
+    }
   };
 })
 
