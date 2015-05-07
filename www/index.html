@@ -41,7 +41,7 @@
 
       <ion-content class="has-subheader">
         <ion-list>
-          <ion-item collection-repeat="article in articles"  item="item" >
+          <ion-item ng-repeat="article in articles"  item="item" >
             <h1 ng-bind-html="article.title" class="item">{{article.title}}</h1> 
             <div ng-bind-html="article.content" dynamic="article.content" class="item">{{article.content}}</div>
           </ion-item>

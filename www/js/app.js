@@ -99,8 +99,16 @@ angular.module('starter', ['ionic', 'ngSanitize'])
     return $sce.trustAsHtml(value);
   };
   
-  $scope.toggleSection = function(sectionId) {
-    console.log("You clicked: " + sectionId);
+  $scope.isSectionShown = function(section) {
+    return $scope.shownSection === section;
+  };
+  
+  $scope.toggleSection = function(section) {
+    if ($scope.isSectionShown(section)) {
+      $scope.shownSection = null;
+    } else {
+      $scope.shownSection = section;
+    }
   };
 })
 
