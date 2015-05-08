@@ -11,7 +11,8 @@ angular.module('starter', [
   'articlesService', 
   'hService', 
   'indexService',
-  'lunrService'
+  'lunrService',
+  'lunrFilter'
 ])
 
 .run(function($ionicPlatform) {
