@@ -6,9 +6,11 @@
 angular.module('starter', ['ionic', 'ngSanitize'])
 
 .service("articlesService", function($http, $q) {
+  var articles = [];
   var deferred = $q.defer();
   $http.get('articles.json').then(function(data) {
     deferred.resolve(data);
+    articles = data;
   });
 
   this.getArticles = function() {
@@ -16,8 +18,8 @@ angular.module('starter', ['ionic', 'ngSanitize'])
   }
 })
 
-.controller('MyCtrl', function($scope, $ionicPopup, Lunr, articlesService, $sce) {
-  $scope.items = [
+.service('headlineService', function() {
+  var articles = [
     {id: 0, headline: "Clegg hints at backing Tories"},
     {id: 1, headline: "Miliband pledge stone is 'Sheffield Rally' moment"},
     {id: 2, headline: "Thousands of migrants rescued in the Med"},
@@ -29,19 +31,42 @@ angular.module('starter', ['ionic', 'ngSanitize'])
     {id: 8, headline: "Britain set for weeks of political paralysis"},
     {id: 9, headline: "Don't be tempted by the politics of apathy. Vote for hope."},
     {id: 10, headline: "Clegg bums goats. More at 11."},
-    {id: 11, headline: "Cameron bums Clegg in order to create coalition."}
+    {id: 11, headline: "Cameron bums Clegg in order to create coalition."}    
   ];
+  
+  return {
+    getArticles: function() {
+      return articles;
+    }
+  };
+})
+
+.service("indexService", function(Lunr) {
+  var index = Lunr(function() {
+    this.field('title', {boost: 10});
+    this.ref('content_id');
+  });
+  
+  return index;
+})
+
+.controller('searchController', function($scope, $ionicPopup, $ionicLoading, Lunr, articlesService, headlineService, $sce) {
+  
+  $scope.items = headlineService.getArticles();
+  
+  $ionicLoading.show();
 
   var promise = articlesService.getArticles();
   promise.then(function(data) {
     $scope.articles = data.data.data;
+    $ionicLoading.hide();
     console.log($scope.articles);
   });
 
   $scope.searchQuery;
 
   // Initialise Lunr index
-  $scope.indexedText = lunr(function () {
+  $scope.indexedText = Lunr(function () {
     this.field('headline', {boost: 10}),
     this.ref('id')
   });
@@ -66,11 +91,13 @@ angular.module('starter', ['ionic', 'ngSanitize'])
     if (!$scope.searchQuery) {
       $scope.showAlert();
     } else {
-      $scope.items = $scope.searchIndex($scope.searchQuery);
+      return items = items.slice($scope.searchIndex($scope.searchQuery));
       // $scope.items = $scope.searchResults; 
       console.log($scope.searchResults, $scope.indexedText.search($scope.searchQuery));
     }
   };
+  
+ $scope.results = {};
 
   $scope.searchIndex = function(q) {
     $scope.searchResults = $scope.indexedText.search(q)
@@ -79,9 +106,15 @@ angular.module('starter', ['ionic', 'ngSanitize'])
           return q.id === parseInt(result.ref, 10) // Adds id field to object 
         })[0];
       });
-
-    console.log($scope.searchResults);
-    return $scope.searchResults;
+          
+      if ($scope.searchResults.length == 0) {
+        $scope.results = $scope.items;
+      } else {
+        $scope.results = $scope.searchResults; 
+      }
+      
+//    $scope.results = $scope.searchResults;
+    console.log($scope.searchResults);  
   };
 
   $scope.clearSearch = function() {
@@ -120,6 +153,25 @@ angular.module('starter', ['ionic', 'ngSanitize'])
       scope.$watch(attrs.dynamic, function(html) {
         ele.html(html);
         $compile(ele.contents())(scope);
+      });
+    }
+  };
+})
+
+.directive('loading', function($http) {
+  return {
+    restrict: 'A',
+    link: function(scope, ele, attrs) {
+      scope.isLoading = function() {
+        return $http.pendingRequests.length > 0;
+      };
+      
+      scope.$watch(scope.isLoading, function(v) {
+        if (v) {
+          ele.show();
+        } else {
+          ele.hide();
+        }
       });
     }
   };
