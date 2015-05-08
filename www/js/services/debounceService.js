@@ -1,6 +1,7 @@
 
     // http://unscriptable.com/2009/03/20/debouncing-javascript-methods/
     // adapted from angular's $timeout code
+    angular.module('debounce', [])
     .factory('$debounce', ['$rootScope', '$browser', '$q', '$exceptionHandler',
         function($rootScope,   $browser,   $q,   $exceptionHandler) {
             var deferreds = {},

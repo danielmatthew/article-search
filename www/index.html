@@ -22,6 +22,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular-sanitize.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/lunr.js/0.5.9/lunr.min.js"></script>
     <script src="js/directives/dynamic.js"></script>
+      <script src="js/services/debounceService.js"></script>
     <script src="js/services/articlesService.js"></script>
     <script src="js/services/headlineService.js"></script>
     <script src="js/services/indexService.js"></script>
@@ -41,16 +42,16 @@
         <label class="item-input-wrapper">
           <i class="icon ion-ios-search placeholder-icon"></i>
           <input id="searchInput" type="search" placeholder="Enter your search query" ng-model="searchQuery">
-          <i ng-if="searchQuery.length > 0" ng-click="clearSearch()" class="icon ion-close"></i>
+<!--          <i ng-if="searchQuery.length > 0" ng-click="clearSearch()" class="icon ion-close"></i>-->
         </label>
-        <button ng-click="doSomething()" class="button button-calm button-clear">Search</button>
+<!--        <button ng-click="doSomething()" class="button button-calm button-clear">Search</button>-->
       </ion-header-bar>
 
       <ion-content class="has-subheader">
         <ion-list>
-          <ion-item ng-repeat="article in articles track by article.id" item="article" >
+          <ion-item ng-repeat="article in results track by article.id" item="article" >
             <h1 ng-bind-html="article.title" class="item item-divider">{{::article.title}}</h1> 
-            <div ng-bind-html="article.id" dynamic="article.content">{{::article.content}}</div>
+            <div ng-bind-html="SkipValidation(article.content)" dynamic="article.content">{{::article.content}}</div>
           </ion-item>
         </ion-list>
       </ion-content>

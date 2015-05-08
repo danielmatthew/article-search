@@ -12,7 +12,8 @@ angular.module('starter', [
   'hService', 
   'indexService',
   'lunrService',
-  'lunrFilter'
+  'lunrFilter',
+  'debounce'
 ])
 
 .run(function($ionicPlatform) {
