@@ -1,6 +1,6 @@
 angular.module('searchController', [])
 .controller('searchController', function($scope, $ionicPopup, $ionicLoading, Lunr, articlesService, $sce, $debounce) {
-   
+      
   // Displays loading screen
   $ionicLoading.show();
   
@@ -17,7 +17,7 @@ angular.module('searchController', [])
     $scope.indexedText = Lunr(function () {
       this.field('title', {boost: 10});
       this.ref('id');
-    });  
+    });
   })
   .then(function(data) {
     // Index data
@@ -30,9 +30,11 @@ angular.module('searchController', [])
   })
   .then(function() {
     // Start watching for input
-    $scope.$watch('searchQuery', function(newVal) {
-        $scope.searchIndex(newVal);
-    });    
+//    $scope.$watch('searchQuery', function(newVal) {
+//        if (newVal) {
+//          $debounce($scope.searchIndex(newVal), 2000);
+//        }
+//    });    
   });
   
 
@@ -48,15 +50,13 @@ angular.module('searchController', [])
         })[0];
       });
             
-      if (searchResults.length == 0) {
-        $scope.results = {};
+      if (searchResults.length === 0 || searchResults === undefined) {
+        $scope.results = articles;
       } else {
         $scope.results = searchResults;
-      } 
-
-    console.log(searchResults);  
+      }
   };
-   
+    
   $scope.isSectionShown = function(section) {
     return $scope.shownSection === section;
   };

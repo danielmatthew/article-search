@@ -2,3 +2,8 @@
 .accordion-item, .accordion-item *, .item .accordion-item  {
 	white-space: normal !important;
 }
+
+.spinner {
+	display: block;
+	text-align: center;
+}

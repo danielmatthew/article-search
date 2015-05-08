@@ -41,7 +41,7 @@
       <ion-header-bar class="bar-subheader item-input-inset">
         <label class="item-input-wrapper">
           <i class="icon ion-ios-search placeholder-icon"></i>
-          <input id="searchInput" type="search" placeholder="Enter your search query" ng-model="searchQuery">
+          <input id="searchInput" ng-keypress="$debounce(searchIndex(searchQuery), 500)" type="search" placeholder="Type to find a medical condition" ng-model="searchQuery">
 <!--          <i ng-if="searchQuery.length > 0" ng-click="clearSearch()" class="icon ion-close"></i>-->
         </label>
 <!--        <button ng-click="doSomething()" class="button button-calm button-clear">Search</button>-->
@@ -49,11 +49,12 @@
 
       <ion-content class="has-subheader">
         <ion-list>
-          <ion-item ng-repeat="article in results track by article.id" item="article" >
-            <h1 ng-bind-html="article.title" class="item item-divider">{{::article.title}}</h1> 
-            <div ng-bind-html="SkipValidation(article.content)" dynamic="article.content">{{::article.content}}</div>
+          <ion-item ng-repeat="article in results track by article.id" item="article">
+            <h1 ng-bind-html="article.title" class="item item-divider">{{::article.title}}</h1>
+            <div ng-bind-html="SkipValidation(article.content)">{{::article.content}}</div>
           </ion-item>
         </ion-list>
+        <ion-spinner ng-if="!results"></ion-spinner>
       </ion-content>
     </ion-pane>
   </body>
