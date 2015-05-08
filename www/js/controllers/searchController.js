@@ -38,6 +38,8 @@ angular.module('searchController', [])
   });
   
 
+
+  
   // Takes query and returns items that are in index
   $scope.searchIndex = function(q) {
     var articles = $scope.articles;
@@ -51,11 +53,11 @@ angular.module('searchController', [])
       });
                  
       if (searchResults.length === 0 || searchResults === undefined) {
-        $scope.results = articles;
+        $scope.results = "";
       } else {
         $scope.results = searchResults;
       }
-  };
+  }; 
     
   $scope.isSectionShown = function(section) {
     return $scope.shownSection === section;

@@ -9,10 +9,7 @@ angular.module('starter', [
   'ngSanitize', 
   'dynamicDirective', 
   'articlesService', 
-  'hService', 
-  'indexService',
   'lunrService',
-  'lunrFilter',
   'debounce'
 ])
 
