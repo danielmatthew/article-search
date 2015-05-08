@@ -30,11 +30,11 @@ angular.module('searchController', [])
   })
   .then(function() {
     // Start watching for input
-//    $scope.$watch('searchQuery', function(newVal) {
-//        if (newVal) {
-//          $debounce($scope.searchIndex(newVal), 2000);
-//        }
-//    });    
+    $scope.$watch('searchQuery', function(newVal) {
+        if (newVal) {
+          $debounce($scope.searchIndex(newVal), 2000);
+        }
+    });    
   });
   
 
@@ -49,7 +49,7 @@ angular.module('searchController', [])
           return q.id === parseInt(result.ref, 10); // Adds id field to object 
         })[0];
       });
-            
+                 
       if (searchResults.length === 0 || searchResults === undefined) {
         $scope.results = articles;
       } else {
